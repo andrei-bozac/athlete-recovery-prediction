@@ -2,7 +2,7 @@
 
 Project for the **Big Data** course — Babeș-Bolyai University, Faculty of Economics and Business Administration, Business Informatics program, Year 3.
 
-**Authors:** Hălăștoan Luca (group 3) · Bozac Andrei (group 1)
+**Authors:** Hălăștoan Luca · Bozac Andrei 
 
 > ⚠️ **Important note about the data:** the dataset used is **synthetic** — [*Athlete Recovery & Biometric Performance Dataset*](https://www.kaggle.com/datasets/sarveshchhetri/athlete-recovery-and-biometric-performance-dataset/data) (Kaggle). The records do not come from monitoring real athletes; they were generated algorithmically, most likely through statistical rules that simulate relationships known from sports physiology literature. This has direct implications on the observed model performance (see the [Limitations](#-limitations) section).
 
@@ -83,7 +83,6 @@ Data selection → Preprocessing → Model training → Evaluation → Interpret
 - `Caffeine_Intake_mg` — bimodal distribution: a major spike at 0 (athletes with no caffeine intake) plus a normal distribution for consumers, centered around 200–250 mg
 
 ![Numerical variable distributions](images/02_numeric_distributions.png)
-![Supplementary distribution/correlation analysis](images/03_correlation_supplementary.png)
 
 ### Correlation matrix (Pearson)
 
@@ -105,15 +104,11 @@ Interesting relationships between predictors: `Training_Intensity` and `Muscle_S
 
 ### 1. Handling missing values
 
-![Missing values per column](images/05_missing_values.png)
-![Missing values table](images/05b_missing_values_table.png)
-
 Only 2 columns contain missing values: `Sleep_Duration_Hours` (604 values) and `Training_Intensity` (1 value). Since the missing percentage is small (under 8%) and the affected variables are continuous and approximately normally distributed → **mean imputation** was chosen, preserving the full dataset size (8,379 records).
 
 ### 2. Outlier detection (IQR method)
 
 ![Outlier analysis](images/06_outliers_analysis.png)
-![Outlier table](images/06b_outliers_table.png)
 
 Outliers identified (rule: below Q1 − 1.5·IQR or above Q3 + 1.5·IQR): `Age` (223), `Sleep_Duration_Hours` (119), `Energy_Level` (106), `Mood_Score` (62), `Resting_Heart_Rate` (39). Checking the min/max values via `describe()` confirmed that all values are **physiologically plausible** (e.g., `Age` max = 41 years, `HRV_ms` max = 115ms — elite endurance athletes, `Resting_Heart_Rate` min = 38 bpm — high-performance athletes) → **all outliers were kept**.
 
@@ -183,15 +178,12 @@ param_grid = {
 }
 ```
 
-![GridSearchCV results](images/08a_gridsearch_table.png)
-
 **Optimal combination:** `n_estimators=200, max_depth=None, min_samples_leaf=4` → R² = 0.8937 (+0.0015 over baseline — a small but methodologically relevant improvement; the default RF was already close to optimal).
 
 ### Model comparison (5-fold CV on the training set)
 
-![Comparison table](images/08b_comparison_table.png)
 ![LR vs RF comparison](images/09_lr_vs_rf_comparison.png)
-![Final comparative metrics](images/09b_metrics_table.png)
+
 
 | Metric | Linear Regression | Random Forest (tuned) | RF improvement |
 |---|---:|---:|---:|
@@ -234,41 +226,8 @@ In practical terms, the model predicts the recovery score with an average error 
 
 ## 🌟 Feature Importance
 
-![Random Forest feature importance](images/11_feature_importance.png)
-
 `HRV_ms` is the dominant predictor, followed by `Sleep_Duration_Hours`, `Stress_Level`, `Energy_Level`, and `Muscle_Soreness` — confirming the observations from the correlation matrix and the linear regression coefficients. Temporal and demographic variables, as well as the one-hot categories, have marginal importance.
 
-## 📁 Project Structure
-
-```
-.
-├── README.md
-├── requirements.txt
-├── .gitignore
-├── notebook/
-│   └── Proiect_Halastoan_Luca_si_Bozac_Andrei.ipynb
-├── docs/
-│   └── Documentatie_proiect.odt          # full project documentation
-├── data/
-│   └── recovery.csv                       # dataset (Kaggle, synthetic) — see note below
-└── images/
-    ├── 01_target_distribution.png
-    ├── 02_numeric_distributions.png
-    ├── 03_correlation_supplementary.png
-    ├── 04_correlation_heatmap.png
-    ├── 05_missing_values.png
-    ├── 05b_missing_values_table.png
-    ├── 06_outliers_analysis.png
-    ├── 06b_outliers_table.png
-    ├── 07_n_estimators_curve.png
-    ├── 08a_gridsearch_table.png
-    ├── 08b_comparison_table.png
-    ├── 08c_summary_table.png
-    ├── 09_lr_vs_rf_comparison.png
-    ├── 09b_metrics_table.png
-    ├── 10_predicted_vs_actual_residuals.png
-    └── 11_feature_importance.png
-```
 
 > 📌 For size/licensing reasons, `recovery.csv` is not included directly in the repo — download it from the [dataset's Kaggle page](https://www.kaggle.com/datasets/sarveshchhetri/athlete-recovery-and-biometric-performance-dataset/data) and place it in `data/recovery.csv` before running the notebook.
 
